@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Pre-push hook for /doi skill
+# Blocks push if vibe debt > 0%
+#
+# Install:
+#   cp examples/pre-push-hook .git/hooks/pre-push
+#   chmod +x .git/hooks/pre-push
+#
+# Requires: jq (brew install jq / apt install jq)
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+TODAY=$(date +%Y-%m-%d)
+DEBT_FILE="VibeDebt/${BRANCH}_${TODAY}.json"
+
+# Check if quiz was run today
+if [ ! -f "$DEBT_FILE" ]; then
+    echo "ERROR: Run /doi before pushing"
+    echo "You must complete the comprehension quiz for this branch."
+    exit 1
+fi
+
+# Check vibe debt percentage
+DEBT=$(jq -r '.stats.vibeDebtPercent' "$DEBT_FILE")
+
+if [ "$DEBT" -gt 0 ]; then
+    echo "ERROR: Vibe debt is ${DEBT}%"
+    echo "You have unanswered or incorrect questions."
+    echo "Run /doi again and answer all questions correctly."
+    exit 1
+fi
+
+echo "Vibe debt: 0% - OK to push"
+exit 0
