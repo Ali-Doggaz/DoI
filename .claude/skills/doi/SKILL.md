@@ -86,6 +86,35 @@ If the current branch IS the main branch, inform the user that there are no chan
 
 If there are no changes in the diff, inform the user and exit gracefully.
 
+**IMPORTANT - Branch Sync Check:**
+After finding the merge base, verify the branch is up to date with the default branch:
+
+```bash
+# Check if default branch has commits not in current branch
+git rev-list HEAD..<default-branch> --count
+```
+
+If the count is greater than 0, the branch is **behind** the default branch. Display an error message in red and exit:
+
+> **ERROR: Your branch is not up to date with `<default-branch>`.**
+> 
+> Your branch is X commit(s) behind. Please update your branch first:
+> ```
+> git fetch origin
+> git merge origin/<default-branch>
+> ```
+> Or rebase:
+> ```
+> git fetch origin
+> git rebase origin/<default-branch>
+> ```
+>
+> This ensures the quiz covers all relevant changes.
+
+Do NOT proceed with the quiz until the branch is up to date.
+
+**NEVER run git merge, git rebase, git pull, or any command that modifies the git history for the user.** Only inform them and exit.
+
 ### Step 2: Analyze the Diff
 Based on the git diff output, create a structured summary:
 
