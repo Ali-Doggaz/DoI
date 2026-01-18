@@ -28,6 +28,7 @@ chmod +x ./install.sh
 claude
 # Run questions
 > /doi
+# pay vibe debt
 > /paydebt
 ```
 
