@@ -115,12 +115,14 @@ Defines interaction patterns for Claude Code's UI tools.
 
 **Key Functions:**
 - `formatQuestionForPresentation()` - Formats MCQ for `AskUserQuestion` tool
-- `generateFeedback()` - Creates response text (correct/incorrect explanations)
+- `generateFeedback()` - Creates response text with emoji indicators (✅/❌/💡)
+- `generateEnhancedFeedback()` - Enhanced feedback with optional code snippets
 - `generateProgressDisplay()` - Shows quiz progress bar
 - `generateResultsSummary()` - Final results with vibe debt percentage
-- `updateStats()` - Updates statistics after each answer
+- `updateStats()` - Updates statistics after each answer (supports `revealed` status)
+- `createPostIncorrectPrompt()` - Creates continue/ask-more prompt after wrong answers
 
-**Options:** Each question includes A/B/C/D choices plus a "Skip All" option.
+**Options:** Each question includes A/B/C/D answer choices. "Show Me" and "Skip" are accessed via the "Other" option where users type the command (AskUserQuestion only supports 2-4 options, so we use all 4 for answers).
 
 ---
 

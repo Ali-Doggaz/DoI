@@ -279,10 +279,11 @@ For each question, prepare:
 3. Avoid "All of the above" or "None of the above"
 
 ### Distractors (Wrong Answers)
-1. Must be plausible - they should seem reasonable
-2. Should represent common misconceptions
-3. Keep similar length and style to correct answer
-4. Don't make them obviously wrong
+1. Generate exactly 3 distractors (we use 4 options: A, B, C, D)
+2. Must be plausible - they should seem reasonable
+3. Should represent common misconceptions
+4. Keep similar length and style to correct answer
+5. Don't make them obviously wrong
 
 ### Question Categories
 Aim for this distribution:

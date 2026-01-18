@@ -43,6 +43,9 @@ export interface QuestionPresentation {
 /**
  * Formats a question for presentation to the user.
  *
+ * Note: AskUserQuestion only supports 2-4 options. "Show Me" and "Skip All"
+ * are handled via the "Other" option (user types "show me" or "skip all").
+ *
  * @param question - The MCQ to format
  * @param questionNumber - 1-indexed question number
  * @param totalQuestions - Total number of questions
@@ -54,15 +57,13 @@ export function formatQuestionForPresentation(
   totalQuestions: number
 ): QuestionPresentation {
   return {
-    questionText: `Question ${questionNumber}/${totalQuestions}: ${question.question}`,
+    questionText: `Question ${questionNumber}/${totalQuestions}: ${question.question}\n\n_💡 Type "show me" or "skip" in Other for special actions_`,
     header: `Q${questionNumber}`,
     options: [
       { label: 'A', description: question.options.A },
       { label: 'B', description: question.options.B },
       { label: 'C', description: question.options.C },
       { label: 'D', description: question.options.D },
-      { label: 'Show Me', description: "I don't know - show me the answer" },
-      { label: 'Skip All', description: 'Skip remaining questions (saves as Vibe Debt)' },
     ],
   };
 }
@@ -70,32 +71,33 @@ export function formatQuestionForPresentation(
 /**
  * Template for AskUserQuestion tool call.
  * Used in the skill definition to show the expected format.
+ *
+ * Note: AskUserQuestion only supports 2-4 options. We use all 4 for answer choices.
+ * "Show Me" and "Skip" are accessed via the "Other" option (user types the command).
  */
 export const ASK_USER_QUESTION_TEMPLATE = `
 Use AskUserQuestion with this structure for each quiz question:
 
 {
   "questions": [{
-    "question": "Question N/M: <question text>",
+    "question": "Question N/M: <question text>\\n\\n_💡 Type \\"show me\\" or \\"skip\\" in Other for special actions_",
     "header": "QN",
     "multiSelect": false,
     "options": [
       { "label": "A", "description": "<option A text>" },
       { "label": "B", "description": "<option B text>" },
       { "label": "C", "description": "<option C text>" },
-      { "label": "D", "description": "<option D text>" },
-      { "label": "Show Me", "description": "I don't know - show me the answer" },
-      { "label": "Skip All", "description": "Skip remaining questions (saves as Vibe Debt)" }
+      { "label": "D", "description": "<option D text>" }
     ]
   }]
 }
 
-After the user selects an answer:
+After the user responds:
 - If A/B/C/D (correct): Show ✅ feedback and proceed to next question
 - If A/B/C/D (incorrect): Show ❌ feedback, then ask if user wants to continue or ask more
-- If Show Me: Show 💡 answer with explanation (counts as vibe debt)
-- If Skip All: Immediately proceed to save remaining questions as Vibe Debt
-- If Other: Treat as a request for clarification
+- If Other contains "show" (case-insensitive): Show 💡 answer with explanation (counts as vibe debt)
+- If Other contains "skip" (case-insensitive): Immediately proceed to save remaining questions as Vibe Debt
+- If Other (anything else): Treat as a request for clarification
 `;
 
 // =============================================================================

@@ -321,7 +321,7 @@ export interface VibeDebtQuestion {
   /** Why this is debt: skipped, answered wrong, or revealed */
   status: 'skipped' | 'incorrect' | 'revealed';
 
-  /** What the user answered (null if skipped) */
+  /** What the user answered (null if skipped or revealed) */
   userAnswer: 'A' | 'B' | 'C' | 'D' | null;
 
   /** Related files */

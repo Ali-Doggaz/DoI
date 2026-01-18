@@ -101,18 +101,34 @@ Based on the git diff output, create a structured summary:
 
 Present this summary to the user before starting the quiz.
 
-### Step 3: Generate ALL Questions Upfront
+### Step 3: Generate ALL Questions with Pre-Rendered Responses
 
-**IMPORTANT:** Generate all questions BEFORE starting the quiz to eliminate delays between questions.
+**CRITICAL FOR SPEED:** Generate a complete question bank WITH pre-rendered feedback strings BEFORE starting the quiz.
 
-For each question, prepare:
-1. Question text
-2. Four options (A, B, C, D)
-3. Correct answer
-4. Detailed explanation (to show after answering)
-5. Code snippet from the diff (when relevant) - include code, language, and description
+For each question, prepare AND STORE as a structured block:
+```
+=== QUESTION 1 ===
+QUESTION_TEXT: <the question>
+OPTION_A: <option A>
+OPTION_B: <option B>
+OPTION_C: <option C>
+OPTION_D: <option D>
+CORRECT: <A|B|C|D>
+FEEDBACK_CORRECT: ✅ **Correct!** <full explanation with code snippet if applicable>
+FEEDBACK_WRONG: ❌ **Incorrect.** The correct answer is **<X>**: "<answer text>"
 
-Store all questions in memory before proceeding to Step 4.
+<full explanation with code snippet if applicable>
+FEEDBACK_REVEALED: 💡 **Answer: <X>** - "<answer text>"
+
+<full explanation with code snippet if applicable>
+=== END QUESTION 1 ===
+```
+
+**Output this entire question bank** before proceeding to Step 4. This ensures:
+- Zero generation time when showing feedback (just echo the pre-rendered string)
+- Zero generation time for next question (just echo from the bank)
+
+The only processing needed per answer is matching user input to CORRECT and selecting the right FEEDBACK_* string.
 
 **Question Count** (scales with complexity):
 - Small diff (1-50 lines): 2-3 questions
@@ -149,51 +165,52 @@ Present questions one at a time using AskUserQuestion tool. Since all questions 
 
 **Question Format:**
 - Display question text with number (e.g., "Question 3/7:")
-- Show options: **A**, **B**, **C**, **D**, **Show Me**, **Skip All**
+- Show 4 answer options: **A**, **B**, **C**, **D**
+- Include hint for "show me" and "skip" via Other option
+
+**IMPORTANT:** AskUserQuestion only supports 2-4 options. We use all 4 for answer choices. "Show Me" and "Skip" are accessed via the system-provided "Other" option where users type the command.
 
 ```json
 {
   "questions": [{
-    "question": "Question N/M: <question text>",
+    "question": "Question N/M: <question text>\n\n_💡 Type \"show me\" or \"skip\" in Other for special actions_",
     "header": "QN",
     "multiSelect": false,
     "options": [
       { "label": "A", "description": "<option A text>" },
       { "label": "B", "description": "<option B text>" },
       { "label": "C", "description": "<option C text>" },
-      { "label": "D", "description": "<option D text>" },
-      { "label": "Show Me", "description": "I don't know - show me the answer" },
-      { "label": "Skip All", "description": "Skip remaining questions (saves as Vibe Debt)" }
+      { "label": "D", "description": "<option D text>" }
     ]
   }]
 }
 ```
 
-**After user responds:**
+**After user responds - USE PRE-RENDERED FEEDBACK (do not regenerate):**
 
 **If A/B/C/D (correct answer):**
-- Display: `✅ **Correct!** [explanation]`
-- If code snippet available, show it
-- Immediately proceed to next question
+- **Echo FEEDBACK_CORRECT exactly as pre-rendered** (do not regenerate)
+- Immediately show next question from bank
 
 **If A/B/C/D (wrong answer):**
-- Display: `❌ **Incorrect.** The correct answer is **[X]**: "[answer text]"`
-- Show explanation
-- If code snippet available, show it with context
+- **Echo FEEDBACK_WRONG exactly as pre-rendered** (do not regenerate)
 - Then ask using AskUserQuestion: "Would you like to continue or learn more about this?"
   - **Continue**: Move to next question
   - **Ask More**: Let user ask follow-up questions about this topic, then continue when ready
 
-**If Show Me:**
-- Display: `💡 **Answer: [X]** - "[answer text]"`
-- Show full explanation with code snippet
+**If Other contains "show" (case-insensitive):**
+- **Echo FEEDBACK_REVEALED exactly as pre-rendered** (do not regenerate)
 - This counts as vibe debt (tracked as "revealed" status)
 - Proceed to next question
 
-**If Skip All:**
+**If Other contains "skip" (case-insensitive):**
 - Display: `⏭️ Skipped N remaining questions. These will be saved as Vibe Debt.`
 - Mark all remaining questions as skipped
 - Proceed immediately to Step 5
+
+**If Other (anything else):**
+- Treat as a clarification request about the current question
+- Answer the user's question, then re-present the same quiz question
 
 **Track:**
 - Questions answered correctly
