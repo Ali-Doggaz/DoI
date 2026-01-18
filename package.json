@@ -1,0 +1,36 @@
+{
+  "name": "ruleyourusage",
+  "version": "0.1.0",
+  "description": "Claude Code skills for understanding vibe-coded changes",
+  "type": "module",
+  "main": "./dist/doi/index.js",
+  "types": "./dist/doi/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/doi/index.d.ts",
+      "import": "./dist/doi/index.js"
+    },
+    "./doi": {
+      "types": "./dist/doi/index.d.ts",
+      "import": "./dist/doi/index.js"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "claude-code",
+    "skill",
+    "vibe-coding",
+    "code-understanding",
+    "git",
+    "diff"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}
