@@ -18,12 +18,17 @@ RuleYourUsage is a tool designed to help developers maintain a comprehensive und
 # Clone the repository
 git clone https://github.com/Ali-Doggaz/RuleYourUsage.git
 cd RuleYourUsage
+chmod +x ./install.sh
+./install.sh
 ```
 
 ## Usage
 
 ```bash
-# Basic usage instructions will be added as the project develops
+claude
+# Run questions
+> /doi
+> /paydebt
 ```
 
 ## Contributing
