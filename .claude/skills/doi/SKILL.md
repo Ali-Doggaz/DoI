@@ -1,3 +1,8 @@
+---
+name: doi
+description: Understand your vibe-coded changes by taking a comprehension quiz on your branch's diff
+---
+
 # /doi - Understand Your Vibe-Coded Changes
 
 Reduce "vibe debt" by ensuring you understand the code you vibe-coded on your current Git branch.
